@@ -1,0 +1,328 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [cedula, setCedula] = useState("");
+  const [genero, setGenero] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [error, setError] = useState("");
+  const nav = useNavigate();
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    setError("");
+    try {
+      const res = await api.post("/auth/login", {
+        email,
+        password
+      });
+      localStorage.setItem("user", JSON.stringify(res.data));
+      nav("/catalogo");
+    } catch (err) {
+      setError("Email o contraseña incorrectos");
+    }
+  }
+
+  function validarCedulaSimple(cedula) {
+    if (!/^\d+$/.test(cedula)) {
+      return false;
+    }
+    if (cedula.length !== 10) {
+      return false;
+    }
+    return true;
+  }
+
+  function handleCedulaChange(e) {
+    const value = e.target.value;
+    if (/^\d*$/.test(value) && value.length <= 10) {
+      setCedula(value);
+    }
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault();
+    setError("");
+    
+    if (!cedula || cedula.trim() === "") {
+      setError("La cédula es obligatoria");
+      return;
+    }
+
+    if (!validarCedulaSimple(cedula)) {
+      setError("La cédula debe contener exactamente 10 números");
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+    
+    if (!genero) {
+      setError("Debe seleccionar un género");
+      return;
+    }
+    
+    try {
+      const res = await api.post("/auth/registro", {
+        email,
+        password,
+        nombre,
+        apellido,
+        cedula,
+        genero,
+        telefono,
+        direccion,
+        tipoUsuario: "COMPRADOR"
+      });
+      localStorage.setItem("user", JSON.stringify(res.data));
+      nav("/catalogo");
+    } catch (err) {
+      setError(err.response?.data || "Error al registrarse. Verifica los datos.");
+    }
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#f0f4f8", paddingTop: "20px" }}>
+      <div style={{ background: "white", padding: "15px 40px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", marginBottom: "40px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ width: "40px", height: "40px", background: "#2563eb", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: "24px" }}>
+            🛒
+          </div>
+          <h1 style={{ margin: "0", fontSize: "20px", fontWeight: "bold", color: "#1e40af" }}>Sistema de Ventas Multiempresa</h1>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", padding: "0 20px 40px" }}>
+        <div style={{ background: "white", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", padding: "40px", width: "100%", maxWidth: "500px" }}>
+          
+          {isRegistering ? (
+            <>
+              <h2 style={{ color: "#1e40af", fontSize: "24px", fontWeight: "bold", marginBottom: "10px", textAlign: "center" }}>Crear cuenta nueva</h2>
+              <p style={{ color: "#666", fontSize: "14px", textAlign: "center", marginBottom: "30px" }}>Completa el siguiente formulario para registrarte</p>
+
+              <form onSubmit={handleRegister} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Nombre</label>
+                    <input
+                      type="text"
+                      value={nombre}
+                      onChange={(e) => setNombre(e.target.value)}
+                      placeholder="Tu nombre"
+                      style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Apellido</label>
+                    <input
+                      type="text"
+                      value={apellido}
+                      onChange={(e) => setApellido(e.target.value)}
+                      placeholder="Tu apellido"
+                      style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Cédula</label>
+                  <input
+                    type="text"
+                    value={cedula}
+                    onChange={handleCedulaChange}
+                    placeholder="1234567890"
+                    maxLength="10"
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                    required
+                  />
+                  <p style={{ fontSize: "12px", color: "#999", margin: "4px 0 0 0" }}>Solo números, exactamente 10 dígitos</p>
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Correo electrónico</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="tucorreo@ejemplo.com"
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Teléfono</label>
+                  <input
+                    type="tel"
+                    value={telefono}
+                    onChange={(e) => setTelefono(e.target.value)}
+                    placeholder="0987654321"
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Género</label>
+                  <select
+                    value={genero}
+                    onChange={(e) => setGenero(e.target.value)}
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                    required
+                  >
+                    <option value="">Selecciona tu género</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Dirección</label>
+                  <input
+                    type="text"
+                    value={direccion}
+                    onChange={(e) => setDireccion(e.target.value)}
+                    placeholder="Calle, número, ciudad"
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Contraseña</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Confirmar contraseña</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Repite tu contraseña"
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                    required
+                  />
+                </div>
+
+                {error && (
+                  <div style={{ background: "#fee", border: "1px solid #fcc", color: "#c33", padding: "12px", borderRadius: "6px", fontSize: "13px" }}>
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  style={{ background: "#2563eb", color: "white", fontWeight: "600", padding: "12px", borderRadius: "6px", border: "none", cursor: "pointer", fontSize: "16px", transition: "background 0.3s", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                  onMouseEnter={(e) => e.target.style.background = "#1d4ed8"}
+                  onMouseLeave={(e) => e.target.style.background = "#2563eb"}
+                >
+                  → Crear cuenta
+                </button>
+              </form>
+
+              <div style={{ marginTop: "20px", textAlign: "center" }}>
+                <p style={{ color: "#666", fontSize: "13px", margin: "0" }}>
+                  ¿Ya tienes una cuenta?{" "}
+                  <button
+                    onClick={() => {
+                      setIsRegistering(false);
+                      setError("");
+                    }}
+                    style={{ color: "#2563eb", fontWeight: "600", cursor: "pointer", border: "none", background: "none", textDecoration: "underline" }}
+                  >
+                    Inicia sesión
+                  </button>
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 style={{ color: "#1e40af", fontSize: "24px", fontWeight: "bold", marginBottom: "10px", textAlign: "center" }}>Iniciar sesión</h2>
+              <p style={{ color: "#666", fontSize: "13px", textAlign: "center", marginBottom: "30px" }}>Accede con tu correo y contraseña para continuar</p>
+
+              <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Correo electrónico</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="tucorreo@ejemplo.com"
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#333", marginBottom: "6px" }}>Contraseña</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                    required
+                  />
+                </div>
+
+                {error && (
+                  <div style={{ background: "#fee", border: "1px solid #fcc", color: "#c33", padding: "12px", borderRadius: "6px", fontSize: "13px" }}>
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  style={{ background: "#2563eb", color: "white", fontWeight: "600", padding: "12px", borderRadius: "6px", border: "none", cursor: "pointer", fontSize: "16px", transition: "background 0.3s", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                  onMouseEnter={(e) => e.target.style.background = "#1d4ed8"}
+                  onMouseLeave={(e) => e.target.style.background = "#2563eb"}
+                >
+                  → Iniciar sesión
+                </button>
+              </form>
+
+              <div style={{ marginTop: "20px", textAlign: "center" }}>
+                <p style={{ color: "#666", fontSize: "13px", margin: "0" }}>
+                  ¿No tienes una cuenta?{" "}
+                  <button
+                    onClick={() => {
+                      setIsRegistering(true);
+                      setError("");
+                    }}
+                    style={{ color: "#2563eb", fontWeight: "600", cursor: "pointer", border: "none", background: "none", textDecoration: "underline" }}
+                  >
+                    Crear cuenta nueva
+                  </button>
+                </p>
+              </div>
+            </>
+          )}
+
+          <div style={{ marginTop: "30px", textAlign: "center", paddingTop: "20px", borderTop: "1px solid #eee" }}>
+            <p style={{ color: "#999", fontSize: "12px", margin: "0" }}>©2025 Sistema de Ventas Multiempresa</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
