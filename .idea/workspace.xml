@@ -34,7 +34,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1762618111712</updated>
-      <workItem from="1762618160328" duration="1204000" />
+      <workItem from="1762618160328" duration="1323000" />
     </task>
     <task id="LOCAL-00001" summary="Front Del Proyecto">
       <option name="closed" value="true" />
@@ -44,7 +44,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762620613528</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Front Del Proyecto">
+      <option name="closed" value="true" />
+      <created>1762621030625</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1762621030625</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
