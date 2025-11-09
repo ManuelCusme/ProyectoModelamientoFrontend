@@ -14,11 +14,16 @@ export default function Login() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); //NUEVO
+  const [showResendButton, setShowResendButton] = useState(false); //NUEVO
   const nav = useNavigate();
 
   async function handleLogin(e) {
     e.preventDefault();
     setError("");
+    setSuccessMessage("");
+    setShowResendButton(false);
+    
     try {
       const res = await api.post("/auth/login", {
         email,
@@ -27,7 +32,27 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(res.data));
       nav("/catalogo");
     } catch (err) {
-      setError("Email o contraseña incorrectos");
+      const errorMsg = err.response?.data || "Email o contraseña incorrectos";
+      setError(errorMsg);
+      
+      //Si el error es por falta de verificación, mostrar botón de reenvío
+      if (errorMsg.includes("verificar tu email")) {
+        setShowResendButton(true);
+      }
+    }
+  }
+
+  // NUEVO: Función para reenviar email de verificación
+  async function handleResendVerification() {
+    setError("");
+    setSuccessMessage("");
+    
+    try {
+      await api.post("/auth/reenviar-verificacion", { email });
+      setSuccessMessage("Email de verificación reenviado. Revisa tu correo (puede estar en spam).");
+      setShowResendButton(false);
+    } catch (err) {
+      setError(err.response?.data || "Error al reenviar email");
     }
   }
 
@@ -51,6 +76,7 @@ export default function Login() {
   async function handleRegister(e) {
     e.preventDefault();
     setError("");
+    setSuccessMessage("");
     
     if (!cedula || cedula.trim() === "") {
       setError("La cédula es obligatoria");
@@ -59,6 +85,11 @@ export default function Login() {
 
     if (!validarCedulaSimple(cedula)) {
       setError("La cédula debe contener exactamente 10 números");
+      return;
+    }
+    
+    if (password.length < 5) {
+      setError("La contraseña debe tener al menos 5 caracteres");
       return;
     }
     
@@ -73,7 +104,7 @@ export default function Login() {
     }
     
     try {
-      const res = await api.post("/auth/registro", {
+      await api.post("/auth/registro", {
         email,
         password,
         nombre,
@@ -82,10 +113,23 @@ export default function Login() {
         genero,
         telefono,
         direccion,
-        tipoUsuario: "COMPRADOR"
+        tipoUsuario: "VENDEDOR"
       });
-      localStorage.setItem("user", JSON.stringify(res.data));
-      nav("/catalogo");
+      
+      //  NUEVO: Mostrar mensaje de éxito y cambiar a login
+      setSuccessMessage("Cuenta creada. Revisa tu email para verificar tu cuenta (puede estar en spam).");
+      setIsRegistering(false);
+      
+      // Limpiar campos
+      setPassword("");
+      setConfirmPassword("");
+      setNombre("");
+      setApellido("");
+      setCedula("");
+      setGenero("");
+      setTelefono("");
+      setDireccion("");
+      
     } catch (err) {
       setError(err.response?.data || "Error al registrarse. Verifica los datos.");
     }
@@ -210,6 +254,7 @@ export default function Login() {
                     style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
                     required
                   />
+                  <p style={{ fontSize: "12px", color: "#999", margin: "4px 0 0 0" }}>Mínimo 5 caracteres</p>
                 </div>
 
                 <div>
@@ -230,9 +275,15 @@ export default function Login() {
                   </div>
                 )}
 
+                {successMessage && (
+                  <div style={{ background: "#efe", border: "1px solid #cfc", color: "#3c3", padding: "12px", borderRadius: "6px", fontSize: "13px" }}>
+                    {successMessage}
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  style={{ background: "#2563eb", color: "white", fontWeight: "600", padding: "12px", borderRadius: "6px", border: "none", cursor: "pointer", fontSize: "16px", transition: "background 0.3s", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                  style={{ background: "#2563eb", color: "white", fontWeight: "600", padding: "12px", borderRadius: "6px", border: "none", cursor: "pointer", fontSize: "16px", transition: "background 0.3s" }}
                   onMouseEnter={(e) => e.target.style.background = "#1d4ed8"}
                   onMouseLeave={(e) => e.target.style.background = "#2563eb"}
                 >
@@ -247,6 +298,7 @@ export default function Login() {
                     onClick={() => {
                       setIsRegistering(false);
                       setError("");
+                      setSuccessMessage("");
                     }}
                     style={{ color: "#2563eb", fontWeight: "600", cursor: "pointer", border: "none", background: "none", textDecoration: "underline" }}
                   >
@@ -291,9 +343,26 @@ export default function Login() {
                   </div>
                 )}
 
+                {successMessage && (
+                  <div style={{ background: "#efe", border: "1px solid #cfc", color: "#3c3", padding: "12px", borderRadius: "6px", fontSize: "13px" }}>
+                    {successMessage}
+                  </div>
+                )}
+
+                {/* ✅ NUEVO: Botón para reenviar verificación */}
+                {showResendButton && (
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    style={{ background: "#f59e0b", color: "white", fontWeight: "600", padding: "10px", borderRadius: "6px", border: "none", cursor: "pointer", fontSize: "14px" }}
+                  >
+                    📧 Reenviar email de verificación
+                  </button>
+                )}
+
                 <button
                   type="submit"
-                  style={{ background: "#2563eb", color: "white", fontWeight: "600", padding: "12px", borderRadius: "6px", border: "none", cursor: "pointer", fontSize: "16px", transition: "background 0.3s", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                  style={{ background: "#2563eb", color: "white", fontWeight: "600", padding: "12px", borderRadius: "6px", border: "none", cursor: "pointer", fontSize: "16px", transition: "background 0.3s" }}
                   onMouseEnter={(e) => e.target.style.background = "#1d4ed8"}
                   onMouseLeave={(e) => e.target.style.background = "#2563eb"}
                 >
@@ -308,6 +377,7 @@ export default function Login() {
                     onClick={() => {
                       setIsRegistering(true);
                       setError("");
+                      setSuccessMessage("");
                     }}
                     style={{ color: "#2563eb", fontWeight: "600", cursor: "pointer", border: "none", background: "none", textDecoration: "underline" }}
                   >

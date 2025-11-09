@@ -8,6 +8,7 @@ import Favoritos from './pages/Favoritos';
 import Historial from './pages/Historial';
 import Perfil from './pages/Perfil';
 import EditarProducto from "./pages/EditarProducto";
+import VerificarEmail from "./pages/VerificarEmail";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/historial" element={<Historial />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/editar-producto/:id" element={<EditarProducto />} />
+        <Route path="/verificar" element={<VerificarEmail />} />
       </Routes>
     </Router>
   );
