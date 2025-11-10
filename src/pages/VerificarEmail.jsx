@@ -22,16 +22,20 @@ export default function VerificarEmail() {
 
   async function verificarEmail(token) {
     try {
+      // ✅ Esperar la respuesta completa antes de cambiar estado
       const response = await api.get(`/auth/verificar-email?token=${token}`);
+      
+      // ✅ Solo cambiar a éxito DESPUÉS de recibir respuesta
       setEstado("exito");
       setMensaje("¡Tu cuenta ha sido verificada exitosamente! Ya puedes iniciar sesión.");
       
       // Redirigir al login después de 3 segundos
       setTimeout(() => {
-        nav("/");
+        nav("/login");
       }, 3000);
       
     } catch (error) {
+      // ✅ Solo mostrar error si realmente falló
       setEstado("error");
       const errorMsg = error.response?.data || "Error al verificar el email. El token puede haber expirado.";
       setMensaje(errorMsg);
@@ -44,9 +48,19 @@ export default function VerificarEmail() {
         
         {estado === "verificando" && (
           <>
-            <div style={{ fontSize: "64px", marginBottom: "20px", animation: "spin 2s linear infinite" }}>⏳</div>
+            <div style={{ fontSize: "64px", marginBottom: "20px" }}>⏳</div>
             <h2 style={{ color: "#1e40af", fontSize: "24px", fontWeight: "bold", marginBottom: "10px" }}>Verificando tu email...</h2>
             <p style={{ color: "#666", fontSize: "14px" }}>Por favor espera un momento</p>
+            {/* ✅ Indicador de carga animado */}
+            <div style={{ marginTop: "20px" }}>
+              <div style={{ display: "inline-block", width: "40px", height: "40px", border: "4px solid #f3f3f3", borderTop: "4px solid #2563eb", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+            </div>
+            <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
           </>
         )}
 
@@ -58,7 +72,7 @@ export default function VerificarEmail() {
             <p style={{ color: "#999", fontSize: "13px" }}>Redirigiendo al inicio de sesión en 3 segundos...</p>
             <div style={{ marginTop: "20px" }}>
               <button
-                onClick={() => nav("/")}
+                onClick={() => nav("/login")}
                 style={{ background: "#2563eb", color: "white", fontWeight: "600", padding: "12px 24px", borderRadius: "6px", border: "none", cursor: "pointer", fontSize: "16px" }}
               >
                 Ir al inicio ahora
@@ -78,7 +92,7 @@ export default function VerificarEmail() {
               Si el link expiró, puedes solicitar un nuevo email de verificación desde la página de inicio de sesión.
             </p>
             <button
-              onClick={() => nav("/")}
+              onClick={() => nav("/login")}
               style={{ background: "#2563eb", color: "white", fontWeight: "600", padding: "12px 24px", borderRadius: "6px", border: "none", cursor: "pointer", fontSize: "16px" }}
             >
               Volver al inicio

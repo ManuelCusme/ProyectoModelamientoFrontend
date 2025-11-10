@@ -18,15 +18,8 @@ export default function EditarProducto() {
   });
 
   const categorias = [
-    "Electrónica",
-    "Ropa y Accesorios",
-    "Hogar y Jardín",
-    "Deportes",
-    "Vehículos",
-    "Libros y Música",
-    "Juguetes",
-    "Servicios",
-    "Otros"
+    "Electrónicos", "Ropa", "Hogar", "Deportes", "Libros",
+    "Juguetes", "Salud y Belleza", "Automotriz", "Mascotas", "Otros"
   ];
 
   useEffect(() => {
@@ -41,15 +34,11 @@ export default function EditarProducto() {
     }
 
     try {
-      const res = await api.get(`/productos/${id}`, {
-        headers: {
-          Authorization: `Bearer ${user.token}`
-        }
-      });
+      const res = await api.get(`/productos/${id}`);
       const producto = res.data;
 
-      // Verificar que el usuario sea el dueño del producto
-      if (producto.vendedorId !== user.id) {
+      // ✅ CORREGIDO: Comparar con producto.vendedor.id
+      if (producto.vendedor?.id !== user.id) {
         alert("No tienes permiso para editar este producto");
         nav("/perfil");
         return;
@@ -59,7 +48,7 @@ export default function EditarProducto() {
         nombre: producto.nombre,
         descripcion: producto.descripcion,
         precio: producto.precio,
-        categoria: producto.categoria,
+        categoria: producto.tipo, // ✅ CORREGIDO: El backend usa "tipo"
         ubicacion: producto.ubicacion,
         imagenUrl: producto.imagenUrl || ""
       });
@@ -67,8 +56,7 @@ export default function EditarProducto() {
       setLoading(false);
     } catch (err) {
       console.error("Error cargando producto:", err);
-      const mensaje = err.response?.data?.message || "Error al cargar el producto";
-      alert(mensaje);
+      alert("Error al cargar el producto");
       nav("/perfil");
     }
   }
@@ -81,43 +69,43 @@ export default function EditarProducto() {
   }
 
   async function handleSubmit(e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!formData.nombre || !formData.descripcion || !formData.precio || !formData.categoria || !formData.ubicacion) {
-    alert("Por favor completa todos los campos obligatorios");
-    return;
+    if (!formData.nombre || !formData.descripcion || !formData.precio || !formData.categoria || !formData.ubicacion) {
+      alert("Por favor completa todos los campos obligatorios");
+      return;
+    }
+
+    if (formData.precio <= 0) {
+      alert("El precio debe ser mayor a 0");
+      return;
+    }
+
+    setGuardando(true);
+
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const dataToSend = {
+        nombre: formData.nombre,
+        descripcion: formData.descripcion,
+        precio: parseFloat(formData.precio),
+        tipo: formData.categoria, // ✅ CORREGIDO: Enviar como "tipo"
+        ubicacion: formData.ubicacion,
+        imagenUrl: formData.imagenUrl,
+        vendedor: {
+          id: user.id
+        }
+      };
+
+      await api.put(`/productos/${id}`, dataToSend);
+      alert("Producto actualizado correctamente");
+      nav("/perfil");
+    } catch (err) {
+      console.error("Error actualizando producto:", err);
+      alert("Error al actualizar el producto");
+      setGuardando(false);
+    }
   }
-
-  if (formData.precio <= 0) {
-    alert("El precio debe ser mayor a 0");
-    return;
-  }
-
-  setGuardando(true);
-
-  try {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const dataToSend = {
-      ...formData,
-      vendedor: {
-        id: user.id
-      }
-    };
-
-    await api.put(`/productos/${id}`, dataToSend, {
-      headers: {
-        Authorization: `Bearer ${user.token}`
-      }
-    });
-    alert("Producto actualizado correctamente");
-    nav("/perfil");
-  } catch (err) {
-    console.error("Error actualizando producto:", err);
-    const mensaje = err.response?.data?.message || "Error al actualizar el producto";
-    alert(mensaje);
-    setGuardando(false);
-  }
-}
 
   if (loading) {
     return (
@@ -222,48 +210,6 @@ export default function EditarProducto() {
               onMouseLeave={(e) => e.target.style.background = "rgba(255,255,255,0.2)"}
             >
               ➕ Publicar Producto
-            </button>
-
-            <button 
-              onClick={() => nav("/favoritos")}
-              style={{
-                background: "rgba(255,255,255,0.2)",
-                color: "#1a237e",
-                border: "none",
-                padding: "15px 20px",
-                borderRadius: "10px",
-                cursor: "pointer",
-                fontSize: "16px",
-                fontWeight: "bold",
-                textAlign: "left",
-                backdropFilter: "blur(10px)",
-                transition: "all 0.3s ease"
-              }}
-              onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.3)"}
-              onMouseLeave={(e) => e.target.style.background = "rgba(255,255,255,0.2)"}
-            >
-              ❤️ Favoritos
-            </button>
-
-            <button 
-              onClick={() => nav("/historial")}
-              style={{
-                background: "rgba(255,255,255,0.2)",
-                color: "#1a237e",
-                border: "none",
-                padding: "15px 20px",
-                borderRadius: "10px",
-                cursor: "pointer",
-                fontSize: "16px",
-                fontWeight: "bold",
-                textAlign: "left",
-                backdropFilter: "blur(10px)",
-                transition: "all 0.3s ease"
-              }}
-              onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.3)"}
-              onMouseLeave={(e) => e.target.style.background = "rgba(255,255,255,0.2)"}
-            >
-              📊 Historial
             </button>
 
             <button 
@@ -554,44 +500,6 @@ export default function EditarProducto() {
                 onFocus={(e) => e.target.style.borderColor = "#00ccff"}
                 onBlur={(e) => e.target.style.borderColor = "#e9ecef"}
               />
-              {formData.imagenUrl && (
-                <div style={{
-                  marginTop: "12px",
-                  padding: "12px",
-                  background: "#f8f9fa",
-                  borderRadius: "8px"
-                }}>
-                  <p style={{
-                    fontSize: "13px",
-                    color: "#666",
-                    margin: "0 0 8px 0"
-                  }}>
-                    Vista previa:
-                  </p>
-                  <img 
-                    src={formData.imagenUrl} 
-                    alt="Preview"
-                    style={{
-                      maxWidth: "200px",
-                      maxHeight: "200px",
-                      borderRadius: "8px",
-                      objectFit: "cover"
-                    }}
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                      e.target.nextSibling.style.display = "block";
-                    }}
-                  />
-                  <p style={{
-                    display: "none",
-                    fontSize: "13px",
-                    color: "#dc3545",
-                    margin: "8px 0 0 0"
-                  }}>
-                    ⚠️ No se pudo cargar la imagen. Verifica la URL.
-                  </p>
-                </div>
-              )}
             </div>
 
             {/* Botones */}
@@ -644,24 +552,6 @@ export default function EditarProducto() {
             </div>
 
           </form>
-        </div>
-
-        {/* Nota informativa */}
-        <div style={{
-          marginTop: "20px",
-          padding: "16px",
-          background: "#fff3cd",
-          border: "1px solid #ffc107",
-          borderRadius: "8px",
-          maxWidth: "800px"
-        }}>
-          <p style={{
-            margin: 0,
-            fontSize: "14px",
-            color: "#856404"
-          }}>
-            ℹ️ <strong>Nota:</strong> Los cambios se aplicarán inmediatamente. Asegúrate de revisar toda la información antes de guardar.
-          </p>
         </div>
 
       </div>

@@ -67,8 +67,8 @@ export default function PublicarProducto() {
         return;
       }
 
-      // Crear producto
-      await api.post(`/productos?vendedorId=${user.id}`, {
+      // ✅ ARREGLADO: Enviar vendedor en el body, no en URL
+      await api.post('/productos', {
         nombre,
         descripcion,
         precio: parseFloat(precio),
@@ -76,7 +76,11 @@ export default function PublicarProducto() {
         ubicacion,
         tipo,
         cantidad: parseInt(cantidad),
-        estadoProducto
+        estadoProducto,
+        // ✅ Enviar vendedor como objeto con su id
+        vendedor: {
+          id: user.id
+        }
       });
 
       setSuccess("¡Producto publicado exitosamente!");
@@ -98,6 +102,7 @@ export default function PublicarProducto() {
 
     } catch (err) {
       setError(err.response?.data || "Error al publicar el producto");
+      console.error("Error completo:", err);
     }
   }
 
@@ -200,21 +205,23 @@ export default function PublicarProducto() {
               ➕ Publicar Producto
             </button>
 
-            <button style={{
-              background: "rgba(255,255,255,0.2)",
-              color: "#1a237e",
-              border: "none",
-              padding: "15px 20px",
-              borderRadius: "10px",
-              cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold",
-              textAlign: "left",
-              backdropFilter: "blur(10px)",
-              transition: "all 0.3s ease"
-            }}
-            onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.3)"}
-            onMouseLeave={(e) => e.target.style.background = "rgba(255,255,255,0.2)"}
+            <button 
+              onClick={() => nav("/perfil")}
+              style={{
+                background: "rgba(255,255,255,0.2)",
+                color: "#1a237e",
+                border: "none",
+                padding: "15px 20px",
+                borderRadius: "10px",
+                cursor: "pointer",
+                fontSize: "16px",
+                fontWeight: "bold",
+                textAlign: "left",
+                backdropFilter: "blur(10px)",
+                transition: "all 0.3s ease"
+              }}
+              onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.3)"}
+              onMouseLeave={(e) => e.target.style.background = "rgba(255,255,255,0.2)"}
             >
               👤 Mi Perfil
             </button>

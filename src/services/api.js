@@ -1,10 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://nonconnotative-haughty-delisa.ngrok-free.dev/api",
-  headers: {
-    'ngrok-skip-browser-warning': 'true'
-  }
+  baseURL: "http://localhost:8080/api"
 });
 
 api.interceptors.request.use(
