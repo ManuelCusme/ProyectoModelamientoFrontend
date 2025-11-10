@@ -14,8 +14,8 @@ export default function Login() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState(""); //NUEVO
-  const [showResendButton, setShowResendButton] = useState(false); //NUEVO
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showResendButton, setShowResendButton] = useState(false);
   const nav = useNavigate();
 
   async function handleLogin(e) {
@@ -35,14 +35,12 @@ export default function Login() {
       const errorMsg = err.response?.data || "Email o contraseña incorrectos";
       setError(errorMsg);
       
-      //Si el error es por falta de verificación, mostrar botón de reenvío
       if (errorMsg.includes("verificar tu email")) {
         setShowResendButton(true);
       }
     }
   }
 
-  // NUEVO: Función para reenviar email de verificación
   async function handleResendVerification() {
     setError("");
     setSuccessMessage("");
@@ -116,11 +114,9 @@ export default function Login() {
         tipoUsuario: "VENDEDOR"
       });
       
-      //  NUEVO: Mostrar mensaje de éxito y cambiar a login
       setSuccessMessage("Cuenta creada. Revisa tu email para verificar tu cuenta (puede estar en spam).");
       setIsRegistering(false);
       
-      // Limpiar campos
       setPassword("");
       setConfirmPassword("");
       setNombre("");
@@ -349,7 +345,6 @@ export default function Login() {
                   </div>
                 )}
 
-                {/* ✅ NUEVO: Botón para reenviar verificación */}
                 {showResendButton && (
                   <button
                     type="button"
@@ -368,6 +363,25 @@ export default function Login() {
                 >
                   → Iniciar sesión
                 </button>
+
+                {/* ✅ AGREGADO: Link para recuperar contraseña */}
+                <div style={{ textAlign: "center", marginTop: "8px" }}>
+                  <button
+                    type="button"
+                    onClick={() => nav("/recuperar-password")}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#2563eb",
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      padding: "0"
+                    }}
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </button>
+                </div>
               </form>
 
               <div style={{ marginTop: "20px", textAlign: "center" }}>

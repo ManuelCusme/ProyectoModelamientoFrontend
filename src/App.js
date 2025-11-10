@@ -9,6 +9,7 @@ import Historial from './pages/Historial';
 import Perfil from './pages/Perfil';
 import EditarProducto from "./pages/EditarProducto";
 import VerificarEmail from "./pages/VerificarEmail";
+import RecuperarPassword from "./pages/RecuperarPassword";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/editar-producto/:id" element={<EditarProducto />} />
         <Route path="/verificar" element={<VerificarEmail />} />
+        <Route path="/recuperar-password" element={<RecuperarPassword />} />
       </Routes>
     </Router>
   );
