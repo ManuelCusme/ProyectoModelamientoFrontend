@@ -6,7 +6,13 @@ export default function PublicarProducto() {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
-  const [imagenUrl, setImagenUrl] = useState("");
+  const [formData, setFormData] = useState({
+    imagenUrl1: "",
+    imagenUrl2: "",
+    imagenUrl3: "",
+    imagenUrl4: "",
+    imagenUrl5: ""
+  });
   const [ubicacion, setUbicacion] = useState("");
   const [tipo, setTipo] = useState("");
   const [cantidad, setCantidad] = useState("1");
@@ -35,6 +41,10 @@ export default function PublicarProducto() {
     "Usado - Estado regular",
     "Para repuestos"
   ];
+
+  function handleImageChange(field, value) {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -67,17 +77,20 @@ export default function PublicarProducto() {
         return;
       }
 
-      // ✅ ARREGLADO: Enviar vendedor en el body, no en URL
+      // Crear producto (enviar las 5 imágenes en el body)
       await api.post('/productos', {
         nombre,
         descripcion,
         precio: parseFloat(precio),
-        imagenUrl,
+        imagenUrl1: formData.imagenUrl1 || null,
+        imagenUrl2: formData.imagenUrl2 || null,
+        imagenUrl3: formData.imagenUrl3 || null,
+        imagenUrl4: formData.imagenUrl4 || null,
+        imagenUrl5: formData.imagenUrl5 || null,
         ubicacion,
         tipo,
         cantidad: parseInt(cantidad),
         estadoProducto,
-        // ✅ Enviar vendedor como objeto con su id
         vendedor: {
           id: user.id
         }
@@ -89,16 +102,20 @@ export default function PublicarProducto() {
       setNombre("");
       setDescripcion("");
       setPrecio("");
-      setImagenUrl("");
+      setFormData({
+        imagenUrl1: "",
+        imagenUrl2: "",
+        imagenUrl3: "",
+        imagenUrl4: "",
+        imagenUrl5: ""
+      });
       setUbicacion("");
       setTipo("");
       setCantidad("1");
       setEstadoProducto("");
 
       // Redirigir al catálogo después de 2 segundos
-      setTimeout(() => {
-        nav("/catalogo");
-      }, 2000);
+      setTimeout(() => {nav("/catalogo"); }, 2000);
 
     } catch (err) {
       setError(err.response?.data || "Error al publicar el producto");
