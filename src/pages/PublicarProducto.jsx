@@ -70,7 +70,7 @@ export default function PublicarProducto() {
     try {
       // Obtener usuario del localStorage
       const user = JSON.parse(localStorage.getItem("user"));
-      
+
       if (!user || !user.id) {
         setError("Debes iniciar sesión para publicar productos");
         nav("/login");
@@ -97,7 +97,7 @@ export default function PublicarProducto() {
       });
 
       setSuccess("¡Producto publicado exitosamente!");
-      
+
       // Limpiar formulario
       setNombre("");
       setDescripcion("");
@@ -115,11 +115,11 @@ export default function PublicarProducto() {
       setEstadoProducto("");
 
       // Redirigir al catálogo después de 2 segundos
-      setTimeout(() => {nav("/catalogo"); }, 2000);
+      setTimeout(() => { nav("/catalogo"); }, 2000);
 
     } catch (err) {
       setError(err.response?.data || "Error al publicar el producto");
-      console.error("Error completo:", err);
+      console.error("Error publicar:", err);
     }
   }
 
@@ -129,14 +129,7 @@ export default function PublicarProducto() {
   }
 
   return (
-    <div style={{ 
-      minHeight: "100vh", 
-      background: "white", 
-      display: "flex",
-      fontFamily: "Arial, sans-serif"
-    }}>
-      
-      {/* Sidebar Azul */}
+    <div style={{ minHeight: "100vh", background: "white", display: "flex", fontFamily: "Arial, sans-serif" }}>
       <div style={{
         width: "280px",
         background: "#00ccff",
@@ -145,349 +138,104 @@ export default function PublicarProducto() {
         display: "flex",
         flexDirection: "column"
       }}>
-        
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          marginBottom: "50px",
-          paddingBottom: "20px",
-          borderBottom: "2px solid rgba(255,255,255,0.3)"
-        }}>
-          <div style={{
-            width: "40px",
-            height: "40px",
-            background: "rgba(255,255,255,0.2)",
-            borderRadius: "10px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "20px",
-            backdropFilter: "blur(10px)"
-          }}>
-            🛒
-          </div>
-          <h1 style={{
-            margin: 0,
-            fontSize: "20px",
-            fontWeight: "bold",
-            color: "#1a237e"
-          }}>
-            VEYCOFLASH
-          </h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "50px", paddingBottom: "20px", borderBottom: "2px solid rgba(255,255,255,0.3)" }}>
+          <div style={{ width: "40px", height: "40px", background: "rgba(255,255,255,0.2)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>🛒</div>
+          <h1 style={{ margin: 0, fontSize: "20px", fontWeight: "bold", color: "#1a237e" }}>VEYCOFLASH</h1>
         </div>
 
         <nav style={{ flex: 1 }}>
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px"
-          }}>
-            <button 
-              onClick={() => nav("/catalogo")}
-              style={{
-                background: "rgba(255,255,255,0.2)",
-                color: "#1a237e",
-                border: "none",
-                padding: "15px 20px",
-                borderRadius: "10px",
-                cursor: "pointer",
-                fontSize: "16px",
-                fontWeight: "bold",
-                textAlign: "left",
-                backdropFilter: "blur(10px)",
-                transition: "all 0.3s ease"
-              }}
-              onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.3)"}
-              onMouseLeave={(e) => e.target.style.background = "rgba(255,255,255,0.2)"}
-            >
-              🏠 Catálogo
-            </button>
-
-            <button 
-              onClick={() => nav("/publicar")}
-              style={{
-                background: "rgba(255,255,255,0.4)",
-                color: "#1a237e",
-                border: "none",
-                padding: "15px 20px",
-                borderRadius: "10px",
-                cursor: "pointer",
-                fontSize: "16px",
-                fontWeight: "bold",
-                textAlign: "left",
-                backdropFilter: "blur(10px)"
-              }}
-            >
-              ➕ Publicar Producto
-            </button>
-
-            <button 
-              onClick={() => nav("/perfil")}
-              style={{
-                background: "rgba(255,255,255,0.2)",
-                color: "#1a237e",
-                border: "none",
-                padding: "15px 20px",
-                borderRadius: "10px",
-                cursor: "pointer",
-                fontSize: "16px",
-                fontWeight: "bold",
-                textAlign: "left",
-                backdropFilter: "blur(10px)",
-                transition: "all 0.3s ease"
-              }}
-              onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.3)"}
-              onMouseLeave={(e) => e.target.style.background = "rgba(255,255,255,0.2)"}
-            >
-              👤 Mi Perfil
-            </button>
+          <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+            <button onClick={() => nav("/catalogo")} style={{ background: "rgba(255,255,255,0.2)", color: "#1a237e", border: "none", padding: "15px 20px", borderRadius: "10px", cursor: "pointer", fontSize: "16px", fontWeight: "bold", textAlign: "left" }}>🏠 Catálogo</button>
+            <button onClick={() => nav("/publicar")} style={{ background: "rgba(255,255,255,0.4)", color: "#1a237e", border: "none", padding: "15px 20px", borderRadius: "10px", cursor: "pointer", fontSize: "16px", fontWeight: "bold" }}>➕ Publicar Producto</button>
+            <button onClick={() => nav("/perfil")} style={{ background: "rgba(255,255,255,0.2)", color: "#1a237e", border: "none", padding: "15px 20px", borderRadius: "10px", cursor: "pointer", fontSize: "16px", fontWeight: "bold" }}>👤 Mi Perfil</button>
           </div>
         </nav>
       </div>
 
-      {/* Contenido Principal */}
-      <div style={{
-        flex: 1,
-        padding: "30px 40px",
-        background: "white",
-        display: "flex",
-        flexDirection: "column"
-      }}>
-        
-        {/* Header */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "30px"
-        }}>
-          <h1 style={{
-            color: "#00ccff",
-            fontSize: "36px",
-            fontWeight: "bold",
-            margin: "0"
-          }}>
-            Publicar Producto
-          </h1>
-          
-          <button 
-            onClick={handleLogout}
-            style={{
-              background: "#ff4444",
-              color: "white",
-              border: "none",
-              padding: "12px 24px",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold",
-              transition: "background 0.3s ease"
-            }}
-            onMouseEnter={(e) => e.target.style.background = "#cc0000"}
-            onMouseLeave={(e) => e.target.style.background = "#ff4444"}
-          >
-            🚪 Cerrar Sesión
-          </button>
+      <div style={{ flex: 1, padding: "30px 40px", background: "white", display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px" }}>
+          <h1 style={{ color: "#00ccff", fontSize: "36px", fontWeight: "bold", margin: "0" }}>Publicar Producto</h1>
+          <button onClick={handleLogout} style={{ background: "#ff4444", color: "white", border: "none", padding: "12px 24px", borderRadius: "8px", cursor: "pointer", fontSize: "16px", fontWeight: "bold" }}>🚪 Cerrar Sesión</button>
         </div>
 
-        {/* Formulario */}
-        <div style={{
-          maxWidth: "700px",
-          background: "#f8f9fa",
-          padding: "30px",
-          borderRadius: "12px",
-          border: "1px solid #e9ecef"
-        }}>
+        <div style={{ maxWidth: "900px", background: "#f8f9fa", padding: "30px", borderRadius: "12px", border: "1px solid #e9ecef" }}>
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            
-            {/* Nombre del producto */}
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>
-                Nombre del producto *
-              </label>
-              <input
-                type="text"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                placeholder="Ej: iPhone 11 64GB"
-                style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
-                required
-              />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>Nombre del producto *</label>
+              <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Ej: iPhone 11 64GB" style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px" }} required />
             </div>
 
-            {/* Descripción */}
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>
-                Descripción
-              </label>
-              <textarea
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                placeholder="Describe tu producto..."
-                rows="4"
-                style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box", resize: "vertical" }}
-              />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>Descripción</label>
+              <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} placeholder="Describe tu producto..." rows="4" style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px" }} />
             </div>
 
-            {/* Precio, Cantidad y Categoría */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "15px" }}>
               <div>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>
-                  Precio (USD) *
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={precio}
-                  onChange={(e) => setPrecio(e.target.value)}
-                  placeholder="0.00"
-                  style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
-                  required
-                />
+                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>Precio (USD) *</label>
+                <input type="number" step="0.01" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="0.00" style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px" }} required />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>
-                  Cantidad *
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={cantidad}
-                  onChange={(e) => setCantidad(e.target.value)}
-                  placeholder="1"
-                  style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
-                  required
-                />
+                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>Cantidad *</label>
+                <input type="number" min="1" value={cantidad} onChange={(e) => setCantidad(e.target.value)} placeholder="1" style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px" }} required />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>
-                  Categoría *
-                </label>
-                <select
-                  value={tipo}
-                  onChange={(e) => setTipo(e.target.value)}
-                  style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box", background: "white" }}
-                  required
-                >
+                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>Categoría *</label>
+                <select value={tipo} onChange={(e) => setTipo(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", background: "white" }} required>
                   <option value="">Selecciona</option>
-                  {categorias.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
+                  {categorias.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
               </div>
             </div>
 
-            {/* Estado del producto y Ubicación */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
               <div>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>
-                  Estado del producto *
-                </label>
-                <select
-                  value={estadoProducto}
-                  onChange={(e) => setEstadoProducto(e.target.value)}
-                  style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box", background: "white" }}
-                  required
-                >
+                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>Estado del producto *</label>
+                <select value={estadoProducto} onChange={(e) => setEstadoProducto(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", background: "white" }} required>
                   <option value="">Selecciona el estado</option>
-                  {estadosProducto.map(estado => (
-                    <option key={estado} value={estado}>{estado}</option>
-                  ))}
+                  {estadosProducto.map(estado => <option key={estado} value={estado}>{estado}</option>)}
                 </select>
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>
-                  Ubicación *
-                </label>
-                <select
-                  value={ubicacion}
-                  onChange={(e) => setUbicacion(e.target.value)}
-                  style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box", background: "white" }}
-                  required
-                >
+                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>Ubicación *</label>
+                <select value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", background: "white" }} required>
                   <option value="">Selecciona tu provincia</option>
-                  {provincias.map(prov => (
-                    <option key={prov} value={prov}>{prov}</option>
-                  ))}
+                  {provincias.map(prov => <option key={prov} value={prov}>{prov}</option>)}
                 </select>
               </div>
             </div>
 
-            {/* URL de imagen */}
+            {/* Imágenes: 5 campos */}
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>
-                URL de imagen
-              </label>
-              <input
-                type="url"
-                value={imagenUrl}
-                onChange={(e) => setImagenUrl(e.target.value)}
-                placeholder="https://ejemplo.com/imagen.jpg"
-                style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
-              />
-              <p style={{ fontSize: "12px", color: "#999", margin: "4px 0 0 0" }}>
-                Opcional: Copia y pega la URL de una imagen desde internet
-              </p>
+              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#333", marginBottom: "8px" }}>Imágenes del producto (Opcional - Máximo 5)</label>
+              {[1, 2, 3, 4, 5].map(num => (
+                <div key={num} style={{ marginBottom: "12px" }}>
+                  <input
+                    type="url"
+                    value={formData[`imagenUrl${num}`]}
+                    onChange={(e) => handleImageChange(`imagenUrl${num}`, e.target.value)}
+                    placeholder={`https://ejemplo.com/imagen${num}.jpg`}
+                    style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "6px" }}
+                  />
+                  {formData[`imagenUrl${num}`] && (
+                    <div style={{ marginTop: "8px", textAlign: "center" }}>
+                      <img src={formData[`imagenUrl${num}`]} alt={`Imagen ${num}`} style={{ maxWidth: "150px", maxHeight: "150px", borderRadius: "8px", objectFit: "cover", border: "2px solid #e9ecef" }} onError={(e) => { e.target.style.display = "none"; }} />
+                    </div>
+                  )}
+                </div>
+              ))}
+              <p style={{ fontSize: "12px", color: "#999", margin: "4px 0 0 0" }}>Puedes agregar hasta 5 imágenes. La primera será la imagen principal.</p>
             </div>
 
-            {/* Mensajes de error/éxito */}
-            {error && (
-              <div style={{ background: "#fee", border: "1px solid #fcc", color: "#c33", padding: "12px", borderRadius: "6px", fontSize: "14px" }}>
-                {error}
-              </div>
-            )}
+            {error && <div style={{ background: "#fee", border: "1px solid #fcc", color: "#c33", padding: "12px", borderRadius: "6px" }}>{error}</div>}
+            {success && <div style={{ background: "#d4edda", border: "1px solid #c3e6cb", color: "#155724", padding: "12px", borderRadius: "6px" }}>{success}</div>}
 
-            {success && (
-              <div style={{ background: "#d4edda", border: "1px solid #c3e6cb", color: "#155724", padding: "12px", borderRadius: "6px", fontSize: "14px" }}>
-                {success}
-              </div>
-            )}
-
-            {/* Botones */}
             <div style={{ display: "flex", gap: "15px" }}>
-              <button
-                type="submit"
-                style={{ 
-                  flex: 1,
-                  background: "#00ccff", 
-                  color: "white", 
-                  fontWeight: "600", 
-                  padding: "14px", 
-                  borderRadius: "8px", 
-                  border: "none", 
-                  cursor: "pointer", 
-                  fontSize: "16px", 
-                  transition: "background 0.3s"
-                }}
-                onMouseEnter={(e) => e.target.style.background = "#0099cc"}
-                onMouseLeave={(e) => e.target.style.background = "#00ccff"}
-              >
-                📤 Publicar Producto
-              </button>
-
-              <button
-                type="button"
-                onClick={() => nav("/catalogo")}
-                style={{ 
-                  background: "#6c757d", 
-                  color: "white", 
-                  fontWeight: "600", 
-                  padding: "14px 24px", 
-                  borderRadius: "8px", 
-                  border: "none", 
-                  cursor: "pointer", 
-                  fontSize: "16px", 
-                  transition: "background 0.3s"
-                }}
-                onMouseEnter={(e) => e.target.style.background = "#5a6268"}
-                onMouseLeave={(e) => e.target.style.background = "#6c757d"}
-              >
-                Cancelar
-              </button>
+              <button type="submit" style={{ flex: 1, background: "#00ccff", color: "white", fontWeight: "600", padding: "14px", borderRadius: "8px", border: "none" }}>📤 Publicar Producto</button>
+              <button type="button" onClick={() => nav("/catalogo")} style={{ background: "#6c757d", color: "white", fontWeight: "600", padding: "14px 24px", borderRadius: "8px", border: "none" }}>Cancelar</button>
             </div>
           </form>
         </div>
